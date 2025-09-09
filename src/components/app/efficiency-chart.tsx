@@ -15,12 +15,10 @@ import {
 } from '@/components/ui/chart';
 import { Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Scatter, TooltipProps, ComposedChart } from 'recharts';
 import { format, parseISO } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { useState } from 'react';
 
 export default function EfficiencyChart() {
   const { efficiencyTrend } = useFuelData();
-  const [lastMonth, setLastMonth] = useState('');
+  let lastMonth = '';
 
   const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
@@ -77,16 +75,14 @@ export default function EfficiencyChart() {
               <ComposedChart
                 data={efficiencyTrend.combined}
                 margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
-                onMouseMove={() => setLastMonth('')}
-                onMouseLeave={() => setLastMonth('')}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="date"
-                  tickFormatter={(dateStr, index) => {
+                  tickFormatter={(dateStr) => {
                     const month = format(parseISO(dateStr), 'M월');
                     if (lastMonth !== month) {
-                      setLastMonth(month);
+                      lastMonth = month;
                       return month;
                     }
                     return '';
