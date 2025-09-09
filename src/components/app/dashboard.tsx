@@ -5,7 +5,7 @@ import StatsCards from './stats-cards';
 import FuelForm from './fuel-form';
 
 export default function Dashboard() {
-  const { stats, addFuelAndMileageEntry } = useFuelData();
+  const { stats } = useFuelData();
 
   return (
     <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
@@ -13,7 +13,7 @@ export default function Dashboard() {
         <StatsCards stats={stats} />
       </div>
       <div className="grid auto-rows-max items-start gap-8">
-        <FuelForm addFuelAndMileageEntry={addFuelAndMileageEntry} />
+        <FuelForm />
       </div>
     </div>
   );

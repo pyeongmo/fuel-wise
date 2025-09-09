@@ -1,17 +1,8 @@
-export interface FuelEntry {
+export interface FuelRecord {
   id: string;
-  type: 'fuel';
-  date: string;
+  date: string; // ISO 8601 format
   liters: number;
   price: number;
   currency: string;
+  mileage: number; // Total mileage at the time of refueling
 }
-
-export interface MileageEntry {
-  id: string;
-  type: 'mileage';
-  date: string;
-  mileage: number;
-}
-
-export type LogEntry = FuelEntry | MileageEntry;

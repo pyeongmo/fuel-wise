@@ -5,19 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import type { FuelEntry, MileageEntry } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
 import { extractReceiptInfo } from '@/ai/flows/extract-receipt-info';
+import { useFuelData } from '@/lib/hooks/use-fuel-data';
 
-interface FuelFormProps {
-  addFuelAndMileageEntry: (fuelData: Omit<FuelEntry, 'id' | 'type'>, mileageData: Omit<MileageEntry, 'id' | 'type'>) => void;
-}
 
-export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
+export default function FuelForm() {
   const { user } = useAuth();
+  const { addFuelRecord } = useFuelData();
   const [liters, setLiters] = useState('');
   const [price, setPrice] = useState('');
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -99,16 +97,13 @@ export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
     const entryDate = new Date(date).toISOString();
 
     try {
-      await addFuelAndMileageEntry(
+      await addFuelRecord(
         {
+          date: entryDate,
           liters: parseFloat(liters),
           price: parseFloat(price),
-          date: entryDate,
           currency,
-        },
-        {
           mileage: parseInt(mileage, 10),
-          date: entryDate,
         }
       );
 
@@ -122,7 +117,7 @@ export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
       const fileInput = document.getElementById('receipt') as HTMLInputElement;
       if(fileInput) fileInput.value = '';
 
-      toast({ title: '⛽️ 주유 및 주행 기록 추가 완료' });
+      toast({ title: '⛽️ 주유 기록 추가 완료' });
     } catch (error) {
       console.error("Error adding document: ", error);
       toast({
@@ -138,7 +133,7 @@ export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>주유 및 주행 기록</CardTitle>
+        <CardTitle>주유 기록 추가</CardTitle>
         <CardDescription>영수증을 올리거나 직접 입력하세요.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -149,7 +144,7 @@ export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
               <Input id="receipt" type="file" accept="image/*" onChange={handleImageChange} className="flex-grow" disabled={isProcessing || isExtracting} />
               {isExtracting && <Loader2 className="h-5 w-5 animate-spin" />}
             </div>
-            <p className="text-xs text-muted-foreground">이미지를 올리면 AI가 주유량, 금액, 날짜를 자동 추출합니다.</p>
+            <p className="text-xs text-muted-foreground">AI가 주유량, 금액, 날짜를 자동 추출합니다.</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="mileage">총 주행 거리 (km)</Label>
