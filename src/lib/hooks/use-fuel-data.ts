@@ -144,8 +144,8 @@ export function useFuelData() {
     return trendData.length > 1 ? trendData.slice(1) : trendData;
   }, [sortedRecords]);
 
-  const { distanceTrend, fuelTrend } = useMemo(() => {
-    if (sortedRecords.length < 2) return { distanceTrend: [], fuelTrend: [] };
+  const usageTrend = useMemo(() => {
+    if (sortedRecords.length < 2) return [];
 
     const monthlyData: { [key: string]: { distance: number; fuel: number } } = {};
 
@@ -158,8 +158,11 @@ export function useFuelData() {
         monthlyData[month] = { distance: 0, fuel: 0 };
       }
       
-      monthlyData[month].distance += current.mileage - previous.mileage;
-      monthlyData[month].fuel += previous.liters;
+      const distance = current.mileage - previous.mileage;
+      if (distance > 0) {
+        monthlyData[month].distance += distance;
+        monthlyData[month].fuel += previous.liters;
+      }
     }
 
     const trend = Object.entries(monthlyData)
@@ -169,12 +172,9 @@ export function useFuelData() {
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    if (trend.length < 2) return { distanceTrend: [], fuelTrend: [] };
+    if (trend.length < 2) return [];
 
-    return {
-      distanceTrend: trend.map(d => ({ date: d.date, distance: d.distance })),
-      fuelTrend: trend.map(d => ({ date: d.date, fuel: d.fuel })),
-    };
+    return trend;
   }, [sortedRecords]);
 
 
@@ -185,7 +185,6 @@ export function useFuelData() {
     deleteFuelRecord,
     stats,
     efficiencyTrend,
-    distanceTrend,
-    fuelTrend,
+    usageTrend,
   };
 }
