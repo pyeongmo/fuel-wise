@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Header />
-      <main className="flex flex-1 flex-col gap-4 py-4 md:gap-8 md:py-8">
+      <main className="flex flex-1 flex-col gap-4 py-4 md:gap-8 md:py-8 overflow-x-auto">
         {loading ? (
           <div className="flex flex-1 items-center justify-center">
             <p>Loading...</p>
