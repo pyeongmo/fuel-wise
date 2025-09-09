@@ -3,6 +3,7 @@
 import { useFuelData } from '@/lib/hooks/use-fuel-data';
 import StatsCards from './stats-cards';
 import FuelForm from './fuel-form';
+import FuelCalendar from './fuel-calendar';
 
 export default function Dashboard() {
   const { stats } = useFuelData();
@@ -11,6 +12,7 @@ export default function Dashboard() {
     <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
       <div className="grid auto-rows-max items-start gap-8 lg:col-span-2">
         <StatsCards stats={stats} />
+        <FuelCalendar />
       </div>
       <div className="grid auto-rows-max items-start gap-8">
         <FuelForm />

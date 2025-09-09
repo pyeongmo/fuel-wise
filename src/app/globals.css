@@ -70,4 +70,10 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .fueled-day {
+    @apply text-accent-foreground bg-accent hover:bg-accent/90 focus:bg-accent/90;
+  }
+  .fueled-day:hover {
+    @apply text-accent-foreground;
+  }
 }
