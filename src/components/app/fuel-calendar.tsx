@@ -7,6 +7,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { DayContent, DayContentProps } from 'react-day-picker';
 import { format, parseISO } from 'date-fns';
 import { Droplets, GaugeCircle } from 'lucide-react';
+import { EditFuelRecordDialog } from './edit-fuel-record-dialog';
+import { Dialog, DialogTrigger } from '../ui/dialog';
 
 export default function FuelCalendar() {
   const { fuelRecords } = useFuelData();
@@ -18,30 +20,35 @@ export default function FuelCalendar() {
 
     if (fuelRecordForDay) {
       return (
-        <Popover>
-          <PopoverTrigger asChild>
-            <div className="relative w-full h-full flex items-center justify-center">
-              <DayContent {...props} />
-            </div>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-2" onPointerDownOutside={(e) => e.preventDefault()}>
-            <div className="flex flex-col space-y-2 text-sm">
-              <div className="font-bold">{format(parseISO(fuelRecordForDay.date), 'yyyy-MM-dd')}</div>
-              <div className="flex items-center gap-2">
-                <Droplets className="h-4 w-4 text-muted-foreground" />
-                <span>{fuelRecordForDay.liters.toFixed(1)} L</span>
+        <EditFuelRecordDialog record={fuelRecordForDay}>
+          <Popover>
+            <PopoverTrigger asChild>
+                <DialogTrigger asChild>
+                  <div className="relative w-full h-full flex items-center justify-center cursor-pointer">
+                    <DayContent {...props} />
+                  </div>
+                </DialogTrigger>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-2" onPointerDownOutside={(e) => e.preventDefault()}>
+              <div className="flex flex-col space-y-2 text-sm">
+                <div className="font-bold">{format(parseISO(fuelRecordForDay.date), 'yyyy-MM-dd')}</div>
+                <div className="flex items-center gap-2">
+                  <Droplets className="h-4 w-4 text-muted-foreground" />
+                  <span>{fuelRecordForDay.liters.toFixed(1)} L</span>
+                </div>
+                <div className="flex items-center gap-2">
+                   <span className="font-mono text-lg">₩</span>
+                  <span>{fuelRecordForDay.price.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <GaugeCircle className="h-4 w-4 text-muted-foreground" />
+                  <span>{fuelRecordForDay.mileage.toLocaleString()} km</span>
+                </div>
+                <div className="text-xs text-muted-foreground pt-1">Click to edit</div>
               </div>
-              <div className="flex items-center gap-2">
-                 <span className="font-mono text-lg">₩</span>
-                <span>{fuelRecordForDay.price.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <GaugeCircle className="h-4 w-4 text-muted-foreground" />
-                <span>{fuelRecordForDay.mileage.toLocaleString()} km</span>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </PopoverContent>
+          </Popover>
+        </EditFuelRecordDialog>
       );
     }
     return <DayContent {...props} />;

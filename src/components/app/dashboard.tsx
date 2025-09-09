@@ -2,8 +2,10 @@
 
 import { useFuelData } from '@/lib/hooks/use-fuel-data';
 import StatsCards from './stats-cards';
-import FuelForm from './fuel-form';
+import { FuelFormDialog } from './fuel-form-dialog';
 import FuelCalendar from './fuel-calendar';
+import { Button } from '../ui/button';
+import { PlusCircle } from 'lucide-react';
 
 export default function Dashboard() {
   const { stats } = useFuelData();
@@ -15,7 +17,12 @@ export default function Dashboard() {
         <FuelCalendar />
       </div>
       <div className="grid auto-rows-max items-start gap-8">
-        <FuelForm />
+        <FuelFormDialog>
+          <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+            <PlusCircle className="mr-2" />
+            새 주유 기록 추가
+          </Button>
+        </FuelFormDialog>
       </div>
     </div>
   );

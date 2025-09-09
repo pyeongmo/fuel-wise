@@ -5,7 +5,7 @@ import type { FuelRecord } from '@/lib/types';
 import { format } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, onSnapshot, query, orderBy, DocumentData } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 export function useFuelData() {
   const { user, loading } = useAuth();
@@ -37,6 +37,23 @@ export function useFuelData() {
   ) => {
     if (!entriesCollectionName) return;
     await addDoc(collection(db, entriesCollectionName), fuelData);
+  }, [entriesCollectionName]);
+
+  const updateFuelRecord = useCallback(async (
+    id: string,
+    fuelData: Partial<Omit<FuelRecord, 'id'>>
+  ) => {
+    if (!entriesCollectionName) return;
+    const recordDoc = doc(db, entriesCollectionName, id);
+    await updateDoc(recordDoc, fuelData);
+  }, [entriesCollectionName]);
+
+  const deleteFuelRecord = useCallback(async (
+    id: string
+  ) => {
+    if (!entriesCollectionName) return;
+    const recordDoc = doc(db, entriesCollectionName, id);
+    await deleteDoc(recordDoc);
   }, [entriesCollectionName]);
 
   const sortedRecords = useMemo(() => {
@@ -94,6 +111,8 @@ export function useFuelData() {
   return {
     fuelRecords: sortedRecords,
     addFuelRecord,
+    updateFuelRecord,
+    deleteFuelRecord,
     stats: {
       totalDistance,
       totalFuelThisMonth,
