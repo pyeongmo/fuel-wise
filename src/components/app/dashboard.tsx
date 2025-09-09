@@ -19,7 +19,7 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle>월별 주유량</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="overflow-x-auto">
                 <MonthlyUsageChart data={monthlyUsage} />
               </CardContent>
             </Card>
