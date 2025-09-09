@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import type { FuelRecord, EfficiencyRecord } from '@/lib/types';
-import { format, subDays, isWithinInterval } from 'date-fns';
+import { format, subDays, isWithinInterval, parseISO, startOfMonth } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -121,22 +121,41 @@ export function useFuelData() {
   }, [fuelRecords]);
 
   const efficiencyTrend = useMemo(() => {
-    const trend: EfficiencyRecord[] = [];
+    if (sortedRecords.length < 2) return [];
+
+    const individualEfficiencies: { date: string; efficiency: number }[] = [];
     for (let i = 1; i < sortedRecords.length; i++) {
-        const current = sortedRecords[i];
-        const previous = sortedRecords[i-1];
-        
-        const distance = current.mileage - previous.mileage;
-        if (distance > 0 && current.liters > 0) {
-            const efficiency = distance / previous.liters;
-            trend.push({
-                date: current.date,
-                efficiency: efficiency,
-            });
-        }
+      const current = sortedRecords[i];
+      const previous = sortedRecords[i - 1];
+
+      const distance = current.mileage - previous.mileage;
+      if (distance > 0 && previous.liters > 0) {
+        const efficiency = distance / previous.liters;
+        individualEfficiencies.push({
+          date: current.date,
+          efficiency: efficiency,
+        });
+      }
     }
-    return trend;
+
+    const monthlyAverages: { [key: string]: { total: number; count: number } } = {};
+    individualEfficiencies.forEach(({ date, efficiency }) => {
+      const month = format(parseISO(date), 'yyyy-MM');
+      if (!monthlyAverages[month]) {
+        monthlyAverages[month] = { total: 0, count: 0 };
+      }
+      monthlyAverages[month].total += efficiency;
+      monthlyAverages[month].count += 1;
+    });
+
+    return Object.entries(monthlyAverages)
+      .map(([month, { total, count }]) => ({
+        date: format(startOfMonth(parseISO(month)), 'yyyy-MM-dd'),
+        efficiency: total / count,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [sortedRecords]);
+
 
   return {
     fuelRecords: sortedRecords,
