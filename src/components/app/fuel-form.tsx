@@ -173,11 +173,11 @@ export default function FuelForm({ recordToEdit, onSave, onAfterSave }: FuelForm
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="liters">주유량 (L)</Label>
-          <Input id="liters" type="number" step="0.01" value={liters} onChange={e => setLiters(e.target.value)} required placeholder="예: 45.5" disabled={isProcessing || isExtracting} />
+          <Input id="liters" type="number" step="0.01" value={liters} onChange={e => setLiters(e.target.value)} required placeholder="예: 24.5" disabled={isProcessing || isExtracting} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="price">금액 ({currency})</Label>
-          <Input id="price" type="number" value={price} onChange={e => setPrice(e.target.value)} required placeholder="예: 60000" disabled={isProcessing || isExtracting}/>
+          <Label htmlFor="price">금액 (원)</Label>
+          <Input id="price" type="number" value={price} onChange={e => setPrice(e.target.value)} required placeholder="예: 40000" disabled={isProcessing || isExtracting}/>
         </div>
       </div>
       <div className="space-y-2">
