@@ -5,16 +5,17 @@ import { Calendar } from '@/components/ui/calendar';
 import { useFuelData } from '@/lib/hooks/use-fuel-data';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DayContent, DayContentProps } from 'react-day-picker';
-import { format, parseISO, isSameDay } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import type { FuelRecord } from '@/lib/types';
-import { Droplets, GaugeCircle, Route } from 'lucide-react';
+import { Droplets, GaugeCircle } from 'lucide-react';
 
 export default function FuelCalendar() {
   const { fuelRecords } = useFuelData();
   const fueledDays = fuelRecords.map(record => parseISO(record.date));
 
   function FuelDay(props: DayContentProps) {
-    const fuelRecordForDay = fuelRecords.find(record => isSameDay(parseISO(record.date), props.date));
+    const formattedDate = format(props.date, 'yyyy-MM-dd');
+    const fuelRecordForDay = fuelRecords.find(record => format(parseISO(record.date), 'yyyy-MM-dd') === formattedDate);
 
     if (fuelRecordForDay) {
       return (
@@ -26,7 +27,7 @@ export default function FuelCalendar() {
           </PopoverTrigger>
           <PopoverContent className="w-auto p-2" onPointerDownOutside={(e) => e.preventDefault()}>
             <div className="flex flex-col space-y-2 text-sm">
-              <div className="font-bold">{format(fuelRecordForDay.date, 'yyyy-MM-dd')}</div>
+              <div className="font-bold">{format(parseISO(fuelRecordForDay.date), 'yyyy-MM-dd')}</div>
               <div className="flex items-center gap-2">
                 <Droplets className="h-4 w-4 text-muted-foreground" />
                 <span>{fuelRecordForDay.liters.toFixed(1)} L</span>
