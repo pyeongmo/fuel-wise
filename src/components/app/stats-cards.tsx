@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Droplets, GaugeCircle, Route } from 'lucide-react';
+import Link from 'next/link';
 
 interface StatsCardsProps {
   stats: {
@@ -22,16 +23,18 @@ export default function StatsCards({ stats }: StatsCardsProps) {
           <p className="text-xs text-muted-foreground">최근 3개월 기준</p>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">평균 연비</CardTitle>
-          <GaugeCircle className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.averageEfficiency.toFixed(1)} km/L</div>
-          <p className="text-xs text-muted-foreground">최근 3개월 기준</p>
-        </CardContent>
-      </Card>
+      <Link href="/efficiency">
+        <Card className="hover:bg-muted/50 cursor-pointer transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">평균 연비</CardTitle>
+            <GaugeCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.averageEfficiency.toFixed(1)} km/L</div>
+            <p className="text-xs text-muted-foreground">최근 3개월 기준</p>
+          </CardContent>
+        </Card>
+      </Link>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">월평균 주유량</CardTitle>

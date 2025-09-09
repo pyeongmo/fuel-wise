@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import type { FuelRecord } from '@/lib/types';
+import type { FuelRecord, EfficiencyRecord } from '@/lib/types';
 import { format, subDays, isWithinInterval } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
 import { db } from '@/lib/firebase';
@@ -74,26 +74,24 @@ export function useFuelData() {
             record => new Date(record.date) < last3MonthsDate
         );
         
-        const startMileageRecord = recordBeforePeriod || last3MonthsRecords[0];
+        const startMileageRecord = recordBeforePeriod || (last3MonthsRecords.length > 1 ? last3MonthsRecords[0] : null);
         const endMileageRecord = last3MonthsRecords[last3MonthsRecords.length - 1];
         
-        if (endMileageRecord.mileage > startMileageRecord.mileage) {
+        if (startMileageRecord && endMileageRecord.mileage > startMileageRecord.mileage) {
             totalDistance = endMileageRecord.mileage - startMileageRecord.mileage;
-        } else if (last3MonthsRecords.length > 1) {
-            const firstRecordInPeriod = last3MonthsRecords[0];
-            totalDistance = endMileageRecord.mileage - firstRecordInPeriod.mileage;
         }
     }
+    
+    // Total fuel for the last 3 months, excluding the most recent fill-up for efficiency calculation
+    const fuelForDistance = last3MonthsRecords
+      .slice(0, last3MonthsRecords.length > 1 ? -1 : 1)
+      .reduce((sum, record) => sum + record.liters, 0);
 
     const totalFuel = last3MonthsRecords.reduce((sum, record) => sum + record.liters, 0);
-
+    
     let averageEfficiency = 0;
-    if (totalDistance > 0) {
-        // Exclude the last fill-up for efficiency calculation as it's for future mileage
-        const fuelForEfficiency = last3MonthsRecords.slice(0, -1).reduce((sum, record) => sum + record.liters, 0);
-        if (fuelForEfficiency > 0) {
-            averageEfficiency = totalDistance / fuelForEfficiency;
-        }
+    if (totalDistance > 0 && fuelForDistance > 0) {
+        averageEfficiency = totalDistance / fuelForDistance;
     }
     
     // Calculate 1-month average based on 3 months of data
@@ -122,6 +120,24 @@ export function useFuelData() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [fuelRecords]);
 
+  const efficiencyTrend = useMemo(() => {
+    const trend: EfficiencyRecord[] = [];
+    for (let i = 1; i < sortedRecords.length; i++) {
+        const current = sortedRecords[i];
+        const previous = sortedRecords[i-1];
+        
+        const distance = current.mileage - previous.mileage;
+        if (distance > 0 && current.liters > 0) {
+            const efficiency = distance / previous.liters;
+            trend.push({
+                date: current.date,
+                efficiency: efficiency,
+            });
+        }
+    }
+    return trend;
+  }, [sortedRecords]);
+
   return {
     fuelRecords: sortedRecords,
     addFuelRecord,
@@ -129,5 +145,6 @@ export function useFuelData() {
     deleteFuelRecord,
     stats,
     monthlyUsage,
+    efficiencyTrend,
   };
 }
