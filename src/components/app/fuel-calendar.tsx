@@ -17,7 +17,7 @@ export default function FuelCalendar() {
       <CardHeader>
         <CardTitle>주유 기록</CardTitle>
       </CardHeader>
-      <CardContent className="flex justify-center pt-2">
+      <CardContent className="flex justify-center">
         <Calendar
           modifiers={{ fueled: fueledDays }}
           modifiersClassNames={{
