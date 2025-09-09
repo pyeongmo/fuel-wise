@@ -140,8 +140,13 @@ export function useFuelData() {
         efficiency: total / count,
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    const finalTrendData = trendData.length > 1 ? trendData.slice(1) : trendData;
 
-    return trendData.length > 1 ? trendData.slice(1) : trendData;
+    return {
+      individual: individualEfficiencies,
+      monthly: finalTrendData,
+    };
   }, [sortedRecords]);
 
   const usageTrend = useMemo(() => {
@@ -172,9 +177,9 @@ export function useFuelData() {
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    if (trend.length < 2) return [];
+    if (trend.length < 2) return trend;
 
-    return trend;
+    return trend.slice(1);
   }, [sortedRecords]);
 
 

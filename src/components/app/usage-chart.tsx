@@ -27,7 +27,7 @@ export default function UsageChart() {
         <Card>
             <CardHeader>
                 <CardTitle>사용량 추이</CardTitle>
-                <CardDescription>주유 기록이 2개 이상 필요합니다.</CardDescription>
+                <CardDescription>주유 기록이 충분하지 않습니다.</CardDescription>
             </CardHeader>
             <CardContent className="flex h-96 items-center justify-center">
                 <p className="text-muted-foreground">차트를 표시하기에 데이터가 부족합니다.</p>
