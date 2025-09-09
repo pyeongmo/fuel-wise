@@ -62,47 +62,48 @@ export function useFuelData() {
 
   const stats = useMemo(() => {
     const today = new Date();
-    const lastMonthDate = subDays(today, 30);
+    const last3MonthsDate = subDays(today, 90);
 
-    const lastMonthRecords = sortedRecords.filter(record => 
-        isWithinInterval(new Date(record.date), { start: lastMonthDate, end: today })
+    const last3MonthsRecords = sortedRecords.filter(record => 
+        isWithinInterval(new Date(record.date), { start: last3MonthsDate, end: today })
     );
 
-    let distanceLastMonth = 0;
-    if (sortedRecords.length > 0 && lastMonthRecords.length > 0) {
-        // Find the record just before the last month period to get starting mileage
-        const recordBeforeLastMonth = sortedRecords.slice().reverse().find(
-            record => new Date(record.date) < lastMonthDate
+    let totalDistance = 0;
+    if (sortedRecords.length > 0 && last3MonthsRecords.length > 0) {
+        const recordBeforePeriod = sortedRecords.slice().reverse().find(
+            record => new Date(record.date) < last3MonthsDate
         );
         
-        const startMileageRecord = recordBeforeLastMonth || lastMonthRecords[0];
-        const endMileageRecord = lastMonthRecords[lastMonthRecords.length - 1];
+        const startMileageRecord = recordBeforePeriod || last3MonthsRecords[0];
+        const endMileageRecord = last3MonthsRecords[last3MonthsRecords.length - 1];
         
         if (endMileageRecord.mileage > startMileageRecord.mileage) {
-            distanceLastMonth = endMileageRecord.mileage - startMileageRecord.mileage;
-        } else if (lastMonthRecords.length > 1) {
-             // Fallback if there's no record before last month
-            const firstRecordInPeriod = lastMonthRecords[0];
-            distanceLastMonth = endMileageRecord.mileage - firstRecordInPeriod.mileage;
+            totalDistance = endMileageRecord.mileage - startMileageRecord.mileage;
+        } else if (last3MonthsRecords.length > 1) {
+            const firstRecordInPeriod = last3MonthsRecords[0];
+            totalDistance = endMileageRecord.mileage - firstRecordInPeriod.mileage;
         }
     }
 
+    const totalFuel = last3MonthsRecords.reduce((sum, record) => sum + record.liters, 0);
 
-    const fuelLastMonth = lastMonthRecords.reduce((sum, record) => sum + record.liters, 0);
-
-    let efficiencyLastMonth = 0;
-    if (distanceLastMonth > 0) {
-        // Exclude the last fill-up for efficiency calculation
-        const fuelForEfficiency = lastMonthRecords.slice(0, -1).reduce((sum, record) => sum + record.liters, 0);
+    let averageEfficiency = 0;
+    if (totalDistance > 0) {
+        // Exclude the last fill-up for efficiency calculation as it's for future mileage
+        const fuelForEfficiency = last3MonthsRecords.slice(0, -1).reduce((sum, record) => sum + record.liters, 0);
         if (fuelForEfficiency > 0) {
-            efficiencyLastMonth = distanceLastMonth / fuelForEfficiency;
+            averageEfficiency = totalDistance / fuelForEfficiency;
         }
     }
     
+    // Calculate 1-month average based on 3 months of data
+    const monthlyDistance = totalDistance / 3;
+    const monthlyFuel = totalFuel / 3;
+    
     return {
-        totalDistance: distanceLastMonth,
-        averageEfficiency: efficiencyLastMonth,
-        totalFuelThisMonth: fuelLastMonth,
+        averageMonthlyDistance: monthlyDistance,
+        averageEfficiency: averageEfficiency,
+        averageMonthlyFuel: monthlyFuel,
     };
 }, [sortedRecords]);
 
