@@ -18,14 +18,14 @@ interface LogTableProps {
 export default function LogTable({ entries }: LogTableProps) {
     if (entries.length === 0) {
         return (
-          <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+          <div className="flex h-[250px] w-full items-center justify-center text-muted-foreground">
             데이터가 없습니다.
           </div>
         );
       }
 
   return (
-    <div className="relative max-h-[250px] overflow-auto">
+    <div className="relative min-w-[350px] max-h-[250px] overflow-auto">
         <Table>
         <TableHeader>
             <TableRow>

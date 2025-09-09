@@ -27,7 +27,7 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle>최근 활동</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="overflow-x-auto">
                 <LogTable entries={logEntries} />
               </CardContent>
             </Card>
