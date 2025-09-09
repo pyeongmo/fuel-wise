@@ -148,12 +148,14 @@ export function useFuelData() {
       monthlyAverages[month].count += 1;
     });
 
-    return Object.entries(monthlyAverages)
+    const trendData = Object.entries(monthlyAverages)
       .map(([month, { total, count }]) => ({
         date: format(startOfMonth(parseISO(month)), 'yyyy-MM-dd'),
         efficiency: total / count,
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    return trendData.length > 1 ? trendData.slice(1) : trendData;
   }, [sortedRecords]);
 
 
