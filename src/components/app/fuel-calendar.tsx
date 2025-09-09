@@ -23,7 +23,6 @@ export default function FuelCalendar() {
           modifiersClassNames={{
             fueled: 'fueled-day',
           }}
-          className="w-full"
         />
       </CardContent>
     </Card>
