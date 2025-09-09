@@ -46,8 +46,8 @@ export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
       });
       return;
     }
-    setIsExtracting(true);
     try {
+        setIsExtracting(true);
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async () => {
@@ -57,11 +57,12 @@ export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
         if (result.liters) setLiters(result.liters.toString());
         if (result.price) setPrice(result.price.toString());
         if (result.date) setDate(result.date);
-        
+
         toast({
           title: '✨ 영수증 분석 완료',
           description: '추출된 정보를 확인하고 필요한 경우 수정하세요.',
         });
+          setIsExtracting(false);
       };
     } catch (error) {
       console.error("Error extracting from receipt: ", error);
@@ -70,8 +71,7 @@ export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
         title: '❌ 분석 실패',
         description: '영수증을 분석하는 중에 오류가 발생했습니다.',
       });
-    } finally {
-      setIsExtracting(false);
+        setIsExtracting(false);
     }
   }
 
@@ -153,7 +153,7 @@ export default function FuelForm({ addFuelAndMileageEntry }: FuelFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="mileage">총 주행 거리 (km)</Label>
-            <Input id="mileage" type="number" value={mileage} onChange={e => setMileage(e.target.value)} required placeholder="예: 54321" disabled={isProcessing || isExtracting} />
+            <Input id="mileage" type="number" value={mileage} onChange={e => setMileage(e.target.value)} required placeholder="예: 54321" disabled={isProcessing} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
