@@ -25,6 +25,6 @@ jobs:
           appId: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
           projectId: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
           # You can specify a different backend ID here
-          # backendId: my-next-app 
+          # backendId: my-next-app
           # You can specify a different branch to deploy here
           # branch: main
