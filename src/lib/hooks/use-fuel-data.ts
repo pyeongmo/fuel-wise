@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import type { FuelRecord, EfficiencyRecord } from '@/lib/types';
+import type { FuelRecord } from '@/lib/types';
 import { format, subDays, isWithinInterval, parseISO, startOfMonth } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
 import { db } from '@/lib/firebase';
@@ -106,20 +106,6 @@ export function useFuelData() {
 }, [sortedRecords]);
 
 
-  const monthlyUsage = useMemo(() => {
-    const usage: { [key: string]: number } = {};
-    fuelRecords.forEach(entry => {
-      const month = format(new Date(entry.date), 'yyyy-MM');
-      if (!usage[month]) {
-        usage[month] = 0;
-      }
-      usage[month] += entry.liters;
-    });
-    return Object.entries(usage)
-      .map(([month, liters]) => ({ name: month, total: liters }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [fuelRecords]);
-
   const efficiencyTrend = useMemo(() => {
     if (sortedRecords.length < 2) return [];
 
@@ -158,6 +144,39 @@ export function useFuelData() {
     return trendData.length > 1 ? trendData.slice(1) : trendData;
   }, [sortedRecords]);
 
+  const { distanceTrend, fuelTrend } = useMemo(() => {
+    if (sortedRecords.length < 2) return { distanceTrend: [], fuelTrend: [] };
+
+    const monthlyData: { [key: string]: { distance: number; fuel: number } } = {};
+
+    for (let i = 1; i < sortedRecords.length; i++) {
+      const current = sortedRecords[i];
+      const previous = sortedRecords[i - 1];
+      const month = format(parseISO(current.date), 'yyyy-MM');
+      
+      if (!monthlyData[month]) {
+        monthlyData[month] = { distance: 0, fuel: 0 };
+      }
+      
+      monthlyData[month].distance += current.mileage - previous.mileage;
+      monthlyData[month].fuel += previous.liters;
+    }
+
+    const trend = Object.entries(monthlyData)
+      .map(([month, data]) => ({
+        date: format(startOfMonth(parseISO(month)), 'yyyy-MM-dd'),
+        ...data
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    if (trend.length < 2) return { distanceTrend: [], fuelTrend: [] };
+
+    return {
+      distanceTrend: trend.map(d => ({ date: d.date, distance: d.distance })),
+      fuelTrend: trend.map(d => ({ date: d.date, fuel: d.fuel })),
+    };
+  }, [sortedRecords]);
+
 
   return {
     fuelRecords: sortedRecords,
@@ -165,7 +184,8 @@ export function useFuelData() {
     updateFuelRecord,
     deleteFuelRecord,
     stats,
-    monthlyUsage,
     efficiencyTrend,
+    distanceTrend,
+    fuelTrend,
   };
 }
