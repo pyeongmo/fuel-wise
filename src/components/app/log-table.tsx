@@ -25,8 +25,8 @@ export default function LogTable({ entries }: LogTableProps) {
       }
 
   return (
-    <div className="relative min-w-[350px] max-h-[250px] overflow-auto">
-        <Table>
+    <div className="relative max-h-[250px] overflow-auto">
+        <Table className="min-w-[350px]">
         <TableHeader>
             <TableRow>
             <TableHead>유형</TableHead>

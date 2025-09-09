@@ -29,8 +29,8 @@ export default function MonthlyUsageChart({ data }: MonthlyUsageChartProps) {
   }
 
   return (
-    <div style={{ minWidth: '400px' }}>
-        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+    <div className="overflow-auto">
+        <ChartContainer config={chartConfig} className="min-h-[200px] min-w-[400px]">
             <BarChart accessibilityLayer data={data} margin={{ top: 20, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis

@@ -19,7 +19,7 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle>월별 주유량</CardTitle>
               </CardHeader>
-              <CardContent className="overflow-x-auto">
+              <CardContent>
                 <MonthlyUsageChart data={monthlyUsage} />
               </CardContent>
             </Card>
@@ -27,7 +27,7 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle>최근 활동</CardTitle>
               </CardHeader>
-              <CardContent className="overflow-x-auto">
+              <CardContent>
                 <LogTable entries={logEntries} />
               </CardContent>
             </Card>
