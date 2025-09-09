@@ -51,7 +51,7 @@ export default function EfficiencyChart() {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="date"
-                  tickFormatter={(dateStr) => format(parseISO(dateStr), 'M/d')}
+                  tickFormatter={(dateStr) => format(parseISO(dateStr), 'MMM')}
                   stroke="hsl(var(--muted-foreground))"
                   />
                 <YAxis
