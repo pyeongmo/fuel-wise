@@ -12,13 +12,15 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Header />
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+      <main className="flex flex-1 flex-col gap-4 py-4 md:gap-8 md:py-8">
         {loading ? (
           <div className="flex flex-1 items-center justify-center">
             <p>Loading...</p>
           </div>
         ) : user ? (
-          <Dashboard />
+          <div className="px-4 md:px-8">
+            <Dashboard />
+          </div>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
             <h1 className="text-2xl font-bold tracking-tight">
