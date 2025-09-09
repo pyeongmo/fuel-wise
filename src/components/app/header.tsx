@@ -20,7 +20,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <Link
-        href="#"
+        href="/"
         className="flex items-center gap-2 text-lg font-semibold md:text-base"
       >
         <Fuel className="h-6 w-6 text-primary" />
