@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import type { FuelRecord } from '@/lib/types';
-import { format } from 'date-fns';
+import { format, subDays, isWithinInterval } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -60,39 +60,52 @@ export function useFuelData() {
     return [...fuelRecords].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [fuelRecords]);
 
-  const totalDistance = useMemo(() => {
-    if (sortedRecords.length < 2) return 0;
-    const firstMileage = sortedRecords[0].mileage;
-    const lastMileage = sortedRecords[sortedRecords.length - 1].mileage;
-    return lastMileage - firstMileage;
-  }, [sortedRecords]);
+  const stats = useMemo(() => {
+    const today = new Date();
+    const lastMonthDate = subDays(today, 30);
 
-  const totalFuelThisMonth = useMemo(() => {
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-    return fuelRecords
-      .filter(record => {
-        const entryDate = new Date(record.date);
-        return entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear;
-      })
-      .reduce((sum, record) => sum + record.liters, 0);
-  }, [fuelRecords]);
-  
-  const averageEfficiency = useMemo(() => {
-    if (sortedRecords.length < 2) return 0;
+    const lastMonthRecords = sortedRecords.filter(record => 
+        isWithinInterval(new Date(record.date), { start: lastMonthDate, end: today })
+    );
 
-    const totalDistanceTravelled = sortedRecords[sortedRecords.length - 1].mileage - sortedRecords[0].mileage;
-    if (totalDistanceTravelled <= 0) return 0;
+    let distanceLastMonth = 0;
+    if (sortedRecords.length > 0 && lastMonthRecords.length > 0) {
+        // Find the record just before the last month period to get starting mileage
+        const recordBeforeLastMonth = sortedRecords.slice().reverse().find(
+            record => new Date(record.date) < lastMonthDate
+        );
+        
+        const startMileageRecord = recordBeforeLastMonth || lastMonthRecords[0];
+        const endMileageRecord = lastMonthRecords[lastMonthRecords.length - 1];
+        
+        if (endMileageRecord.mileage > startMileageRecord.mileage) {
+            distanceLastMonth = endMileageRecord.mileage - startMileageRecord.mileage;
+        } else if (lastMonthRecords.length > 1) {
+             // Fallback if there's no record before last month
+            const firstRecordInPeriod = lastMonthRecords[0];
+            distanceLastMonth = endMileageRecord.mileage - firstRecordInPeriod.mileage;
+        }
+    }
 
-    // Sum of all liters except the last fill-up
-    const totalFuelUsed = sortedRecords
-        .slice(0, -1)
-        .reduce((sum, record) => sum + record.liters, 0);
 
-    if (totalFuelUsed <= 0) return 0;
+    const fuelLastMonth = lastMonthRecords.reduce((sum, record) => sum + record.liters, 0);
 
-    return totalDistanceTravelled / totalFuelUsed;
-  }, [sortedRecords]);
+    let efficiencyLastMonth = 0;
+    if (distanceLastMonth > 0) {
+        // Exclude the last fill-up for efficiency calculation
+        const fuelForEfficiency = lastMonthRecords.slice(0, -1).reduce((sum, record) => sum + record.liters, 0);
+        if (fuelForEfficiency > 0) {
+            efficiencyLastMonth = distanceLastMonth / fuelForEfficiency;
+        }
+    }
+    
+    return {
+        totalDistance: distanceLastMonth,
+        averageEfficiency: efficiencyLastMonth,
+        totalFuelThisMonth: fuelLastMonth,
+    };
+}, [sortedRecords]);
+
 
   const monthlyUsage = useMemo(() => {
     const usage: { [key: string]: number } = {};
@@ -113,11 +126,7 @@ export function useFuelData() {
     addFuelRecord,
     updateFuelRecord,
     deleteFuelRecord,
-    stats: {
-      totalDistance,
-      totalFuelThisMonth,
-      averageEfficiency,
-    },
+    stats,
     monthlyUsage,
   };
 }
