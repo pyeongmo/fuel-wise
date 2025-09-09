@@ -18,9 +18,11 @@ import {
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { useState } from 'react';
 
 export default function UsageChart() {
   const { usageTrend } = useFuelData();
+  const [lastMonth, setLastMonth] = useState('');
 
   if (!usageTrend || usageTrend.length < 1) {
     return (
@@ -62,11 +64,20 @@ export default function UsageChart() {
             <LineChart
               data={usageTrend}
               margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+              onMouseMove={() => setLastMonth('')}
+              onMouseLeave={() => setLastMonth('')}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis
                 dataKey="date"
-                tickFormatter={(dateStr) => format(parseISO(dateStr), 'M월', { locale: ko })}
+                tickFormatter={(dateStr, index) => {
+                  const month = format(parseISO(dateStr), 'M월');
+                  if (lastMonth !== month) {
+                    setLastMonth(month);
+                    return month;
+                  }
+                  return '';
+                }}
                 stroke="hsl(var(--muted-foreground))"
               />
               <YAxis
