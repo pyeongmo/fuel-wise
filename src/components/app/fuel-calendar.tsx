@@ -6,7 +6,6 @@ import { useFuelData } from '@/lib/hooks/use-fuel-data';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DayContent, DayContentProps } from 'react-day-picker';
 import { format, parseISO } from 'date-fns';
-import type { FuelRecord } from '@/lib/types';
 import { Droplets, GaugeCircle } from 'lucide-react';
 
 export default function FuelCalendar() {
