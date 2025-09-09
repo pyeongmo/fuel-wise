@@ -13,7 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Scatter, TooltipProps } from 'recharts';
+import { Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Scatter, TooltipProps, ComposedChart } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
@@ -72,7 +72,7 @@ export default function EfficiencyChart() {
       <CardContent>
         <ChartContainer config={{}} className="h-96 w-full">
             <ResponsiveContainer>
-              <LineChart
+              <ComposedChart
                 margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -115,7 +115,7 @@ export default function EfficiencyChart() {
                     shape="circle"
                     name="개별 기록"
                 />
-              </LineChart>
+              </ComposedChart>
             </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
