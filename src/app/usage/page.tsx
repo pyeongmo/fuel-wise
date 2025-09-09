@@ -5,6 +5,7 @@ import UsageChart from '@/components/app/usage-chart';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import EfficiencyChart from '@/components/app/efficiency-chart';
 
 export default function UsagePage() {
   return (
@@ -19,10 +20,13 @@ export default function UsagePage() {
             </Link>
           </Button>
           <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-            사용량 추이
+            상세 분석
           </h1>
         </div>
-        <UsageChart />
+        <div className="grid gap-8">
+            <UsageChart />
+            <EfficiencyChart />
+        </div>
       </main>
     </div>
   );

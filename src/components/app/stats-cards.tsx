@@ -25,7 +25,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
           </CardContent>
         </Card>
       </Link>
-      <Link href="/efficiency">
+      <Link href="/usage">
         <Card className="hover:bg-muted/50 cursor-pointer transition-colors">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">평균 연비</CardTitle>
