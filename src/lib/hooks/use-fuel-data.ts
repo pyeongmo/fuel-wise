@@ -107,9 +107,9 @@ export function useFuelData() {
 
 
   const efficiencyTrend = useMemo(() => {
-    if (sortedRecords.length < 2) return [];
+    if (sortedRecords.length < 2) return { individual: [], monthly: [] };
 
-    const individualEfficiencies: { date: string; efficiency: number }[] = [];
+    const individualEfficiencies: { date: string; individualEfficiency: number }[] = [];
     for (let i = 1; i < sortedRecords.length; i++) {
       const current = sortedRecords[i];
       const previous = sortedRecords[i - 1];
@@ -119,18 +119,18 @@ export function useFuelData() {
         const efficiency = distance / previous.liters;
         individualEfficiencies.push({
           date: current.date,
-          efficiency: efficiency,
+          individualEfficiency: efficiency,
         });
       }
     }
 
     const monthlyAverages: { [key: string]: { total: number; count: number } } = {};
-    individualEfficiencies.forEach(({ date, efficiency }) => {
+    individualEfficiencies.forEach(({ date, individualEfficiency }) => {
       const month = format(parseISO(date), 'yyyy-MM');
       if (!monthlyAverages[month]) {
         monthlyAverages[month] = { total: 0, count: 0 };
       }
-      monthlyAverages[month].total += efficiency;
+      monthlyAverages[month].total += individualEfficiency;
       monthlyAverages[month].count += 1;
     });
 

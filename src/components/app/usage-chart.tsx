@@ -22,7 +22,7 @@ import { ko } from 'date-fns/locale';
 export default function UsageChart() {
   const { usageTrend } = useFuelData();
 
-  if (usageTrend.length < 1) {
+  if (!usageTrend || usageTrend.length < 1) {
     return (
         <Card>
             <CardHeader>
