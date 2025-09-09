@@ -47,12 +47,12 @@ export default function EfficiencyChart() {
             <ResponsiveContainer>
               <LineChart
                 data={efficiencyTrend}
-                margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+                margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="date"
-                  tickFormatter={(dateStr) => format(parseISO(dateStr), 'M월')}
+                  tickFormatter={(dateStr) => format(parseISO(dateStr), 'M월', { locale: ko })}
                   stroke="hsl(var(--muted-foreground))"
                   />
                 <YAxis
