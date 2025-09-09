@@ -107,7 +107,7 @@ export function useFuelData() {
 
 
   const efficiencyTrend = useMemo(() => {
-    if (sortedRecords.length < 2) return { individual: [], monthly: [] };
+    if (sortedRecords.length < 2) return { individual: [], monthly: [], combined: [] };
 
     const individualEfficiencies: { date: string; individualEfficiency: number }[] = [];
     for (let i = 1; i < sortedRecords.length; i++) {
@@ -143,9 +143,16 @@ export function useFuelData() {
     
     const finalTrendData = trendData.length > 1 ? trendData.slice(1) : trendData;
 
+    const combinedData = [
+      ...individualEfficiencies,
+      ...finalTrendData,
+    ].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+
     return {
       individual: individualEfficiencies,
       monthly: finalTrendData,
+      combined: combinedData,
     };
   }, [sortedRecords]);
 

@@ -73,6 +73,7 @@ export default function EfficiencyChart() {
         <ChartContainer config={{}} className="h-96 w-full">
             <ResponsiveContainer>
               <ComposedChart
+                data={efficiencyTrend.combined}
                 margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -93,7 +94,6 @@ export default function EfficiencyChart() {
                   content={<CustomTooltip />}
                   />
                 <Line
-                  data={efficiencyTrend.monthly}
                   type="monotone"
                   dataKey="efficiency"
                   stroke="hsl(var(--chart-2))"
@@ -106,9 +106,9 @@ export default function EfficiencyChart() {
                       fill: 'hsl(var(--chart-2))',
                   }}
                   name="월평균 연비"
+                  connectNulls
                   />
                 <Scatter
-                    data={efficiencyTrend.individual}
                     dataKey="individualEfficiency"
                     fill="hsl(var(--muted-foreground))"
                     opacity={0.6}
