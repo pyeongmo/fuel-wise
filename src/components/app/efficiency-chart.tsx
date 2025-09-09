@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/chart';
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { format, parseISO } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export default function EfficiencyChart() {
   const { efficiencyTrend } = useFuelData();
@@ -51,7 +52,7 @@ export default function EfficiencyChart() {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="date"
-                  tickFormatter={(dateStr) => format(parseISO(dateStr), 'MMM')}
+                  tickFormatter={(dateStr) => format(parseISO(dateStr), 'M월')}
                   stroke="hsl(var(--muted-foreground))"
                   />
                 <YAxis

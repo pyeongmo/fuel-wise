@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
+import { ko } from "date-fns/locale"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -17,6 +18,12 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
+      locale={ko}
+      formatters={{
+        formatCaption: (date, options) => {
+          return `${date.getFullYear()}년 ${date.getMonth() + 1}월`
+        }
+      }}
       showOutsideDays={showOutsideDays}
       className={cn(className)}
       classNames={{
