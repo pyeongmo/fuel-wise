@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -37,6 +37,31 @@ export function EditFuelRecordDialog({ record, children }: EditFuelRecordDialogP
   const { updateFuelRecord, deleteFuelRecord } = useFuelData();
   const { toast } = useToast();
 
+  useEffect(() => {
+    const handlePopState = () => {
+      setOpen(false);
+    };
+
+    if (open) {
+      history.pushState({ modal: true }, '');
+      window.addEventListener('popstate', handlePopState);
+    }
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [open]);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && open) {
+      if (history.state?.modal) {
+        history.back();
+      }
+    }
+    setOpen(isOpen);
+  };
+
+
   const handleSave = async (data: Omit<FuelRecord, 'id'>) => {
     await updateFuelRecord(record.id, data);
   };
@@ -45,7 +70,7 @@ export function EditFuelRecordDialog({ record, children }: EditFuelRecordDialogP
     try {
       await deleteFuelRecord(record.id);
       toast({ title: '🗑️ 주유 기록 삭제 완료' });
-      setOpen(false);
+      handleOpenChange(false);
     } catch (error) {
       console.error('Error deleting record: ', error);
       toast({
@@ -57,7 +82,7 @@ export function EditFuelRecordDialog({ record, children }: EditFuelRecordDialogP
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       {children}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -70,7 +95,7 @@ export function EditFuelRecordDialog({ record, children }: EditFuelRecordDialogP
           <FuelForm
             recordToEdit={record}
             onSave={handleSave}
-            onAfterSave={() => setOpen(false)}
+            onAfterSave={() => handleOpenChange(false)}
           />
         </div>
         <DialogFooter className="sm:justify-between">
