@@ -58,7 +58,7 @@ export default function UsageChart() {
           }}
           className="h-96 w-full"
         >
-          <ResponsiveContainer>
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={usageTrend}
               margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
