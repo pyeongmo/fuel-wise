@@ -5,5 +5,17 @@
   "display": "standalone",
   "background_color": "#2D3A31",
   "theme_color": "#2D3A31",
-  "description": "AI-powered fuel cost and efficiency tracker."
+  "description": "AI 기반 주유 비용 및 효율 트래커",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
