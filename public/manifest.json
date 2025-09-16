@@ -1,0 +1,21 @@
+{
+  "name": "FuelWise",
+  "short_name": "FuelWise",
+  "description": "AI-powered fuel cost and efficiency tracker.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2B2B2B",
+  "theme_color": "#2D3A31",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
