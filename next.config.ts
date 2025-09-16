@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import type {NextConfig} from 'next';
 import withPWA from 'next-pwa';
 
@@ -29,6 +30,21 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+  },
+  webpack: (config, { isServer }) => {
+    //
+    // Fix for:
+    // require.extensions is not supported by webpack. Use a loader instead.
+    //
+    // https://github.com/firebase/genkit/issues/118#issuecomment-2222336814
+    //
+    config.externals.push('wasabi-express');
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'node-fetch': false,
+      'util': false,
+    };
+    return config
   },
 };
 
