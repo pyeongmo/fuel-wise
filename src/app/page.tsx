@@ -5,6 +5,8 @@ import Header from '@/components/app/header';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { FcGoogle } from 'react-icons/fc';
+import { FuelFormDialog } from '@/components/app/fuel-form-dialog';
+import { Plus } from 'lucide-react';
 
 export default function Home() {
   const { user, loading, loginWithGoogle } = useAuth();
@@ -18,9 +20,20 @@ export default function Home() {
             <p>Loading...</p>
           </div>
         ) : user ? (
-          <div className="px-4 md:px-8">
-            <Dashboard />
-          </div>
+          <>
+            <div className="px-4 md:px-8">
+              <Dashboard />
+            </div>
+            <FuelFormDialog>
+                <Button
+                    size="icon"
+                    className="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-accent shadow-lg hover:bg-accent/90 text-accent-foreground"
+                >
+                    <Plus className="h-6 w-6" />
+                    <span className="sr-only">새 주유 기록 추가</span>
+                </Button>
+            </FuelFormDialog>
+          </>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
             <h1 className="text-2xl font-bold tracking-tight">
